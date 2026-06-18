@@ -1,0 +1,46 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd.exe",
+            "args": ["/d", "/c", "{{HOOK_CMD_PATH}}"],
+            "timeout": 3,
+            "name": "ripple-memory-startup"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd.exe",
+            "args": ["/d", "/c", "{{HOOK_CMD_PATH}}"],
+            "timeout": 3,
+            "name": "ripple-memory-prompt"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd.exe",
+            "args": ["/d", "/c", "{{HOOK_CMD_PATH}}"],
+            "timeout": 3,
+            "name": "ripple-memory-stop"
+          }
+        ]
+      }
+    ]
+  }
+}

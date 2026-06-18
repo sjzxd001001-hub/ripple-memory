@@ -1,0 +1,26 @@
+@echo off
+setlocal
+if not "%RIPPLE_MEMORY_HOOK_MARKER_LOG%"=="" echo %DATE% %TIME% cwd=%CD% args=%*>> "%RIPPLE_MEMORY_HOOK_MARKER_LOG%"
+set "RIPPLE_MEMORY_PYTHON={{PYTHON}}"
+
+if "%RIPPLE_MEMORY_HOOK_ENABLED%"=="0" (
+  "%RIPPLE_MEMORY_PYTHON%" -c "import json; print(json.dumps({'continue': True, 'suppressOutput': True}))"
+  exit /b 0
+)
+
+if "%PYTHONPATH%"=="" (
+  set "PYTHONPATH={{RUNTIME_SRC}}"
+) else (
+  set "PYTHONPATH={{RUNTIME_SRC}};%PYTHONPATH%"
+)
+
+if "%MEMORIA_MCP_DATA_DIR%"=="" set "MEMORIA_MCP_DATA_DIR={{DATA_DIR}}"
+if "%MEMORIA_MCP_ENABLE_SEMANTIC%"=="" set "MEMORIA_MCP_ENABLE_SEMANTIC=true"
+if "%MEMORIA_MCP_EMBEDDING_MODEL%"=="" set "MEMORIA_MCP_EMBEDDING_MODEL={{RUNTIME_SRC}}\..\models\paraphrase-multilingual-MiniLM-L12-v2"
+if "%MEMORIA_MCP_PRELOAD_EMBEDDING%"=="" set "MEMORIA_MCP_PRELOAD_EMBEDDING=false"
+if "%MEMORIA_MCP_SEARCH_INDEX_QUERY_MODE%"=="" set "MEMORIA_MCP_SEARCH_INDEX_QUERY_MODE=live"
+if "%RIPPLE_MEMORY_HOOK_SEARCH_MODE%"=="" set "RIPPLE_MEMORY_HOOK_SEARCH_MODE=live"
+if "%RIPPLE_MEMORY_HOOK_TOP_K%"=="" set "RIPPLE_MEMORY_HOOK_TOP_K=4"
+
+"%RIPPLE_MEMORY_PYTHON%" -m memoria_mcp.codex_hook
+exit /b 0

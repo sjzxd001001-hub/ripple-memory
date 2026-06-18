@@ -1,0 +1,60 @@
+{
+  "mcpServers": {
+    "ripple-memory": {
+      "command": "{{PYTHON}}",
+      "args": ["-m", "memoria_mcp.server"],
+      "env": {
+        "PYTHONPATH": "{{RUNTIME_SRC}}",
+        "MEMORIA_MCP_DATA_DIR": "{{DATA_DIR}}",
+        "MEMORIA_MCP_ENABLE_SEMANTIC": "true",
+        "MEMORIA_MCP_EMBEDDING_MODEL": "{{RUNTIME_SRC}}\\..\\models\\paraphrase-multilingual-MiniLM-L12-v2",
+        "MEMORIA_MCP_PRELOAD_EMBEDDING": "true",
+        "MEMORIA_MCP_SEARCH_INDEX_QUERY_MODE": "live",
+        "MEMORIA_MCP_EXIT_ON_RUNTIME_CHANGE": "false",
+        "MEMORIA_MCP_IDLE_EXIT_SECONDS": "36000",
+        "RIPPLE_MEMORY_HOST": "qwen"
+      }
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{HOOK_CMD_PATH}}",
+            "timeout": 3000,
+            "name": "ripple-memory-startup"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{HOOK_CMD_PATH}}",
+            "timeout": 3000,
+            "name": "ripple-memory-prompt"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{HOOK_CMD_PATH}}",
+            "timeout": 3000,
+            "name": "ripple-memory-stop"
+          }
+        ]
+      }
+    ]
+  }
+}

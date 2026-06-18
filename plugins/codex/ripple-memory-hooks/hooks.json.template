@@ -1,0 +1,43 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{PLUGIN_TARGET_JSON}}\\scripts\\ripple-memory-codex-hook.cmd",
+            "commandWindows": "{{PLUGIN_TARGET_JSON}}\\scripts\\ripple-memory-codex-hook.cmd",
+            "timeout": 3,
+            "async": false
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{PLUGIN_TARGET_JSON}}\\scripts\\ripple-memory-codex-hook.cmd",
+            "commandWindows": "{{PLUGIN_TARGET_JSON}}\\scripts\\ripple-memory-codex-hook.cmd",
+            "timeout": 3,
+            "async": false
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{PLUGIN_TARGET_JSON}}\\scripts\\ripple-memory-codex-hook.cmd",
+            "commandWindows": "{{PLUGIN_TARGET_JSON}}\\scripts\\ripple-memory-codex-hook.cmd",
+            "timeout": 3,
+            "async": false
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ripple-memory"
+version = "0.1.0"
+description = "Persistent memory system for coding agents — causal graph memory with pulse propagation, dual-track storage, and BM25+vector hybrid retrieval"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Ripple Memory" },
+]
+readme = "README.md"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "mcp>=1.0.0",
+    "sentence-transformers>=2.2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/sjzxd001001-hub/ripple-memory"
+Repository = "https://github.com/sjzxd001001-hub/ripple-memory"
+Issues = "https://github.com/sjzxd001001-hub/ripple-memory/issues"
+
+[project.optional-dependencies]
+chinese = ["jieba>=0.42"]
+
+[project.scripts]
+ripple-memory = "memoria_mcp.server:run"
+ripple-memory-daemon = "memoria_mcp.agent_daemon:run"
+ripple-memory-mcp-proxy = "memoria_mcp.mcp_stdio_proxy:run"
+ripple-memory-context = "memoria_mcp.context_cli:context_main"
+ripple-memory-run = "memoria_mcp.context_cli:run_main"
+ripple-memory-hook = "memoria_mcp.codex_hook:main"
+ripple-memory-qwen-hook = "memoria_mcp.qwen_code_hook:main"
+ripple-memory-install-check = "memoria_mcp.install_check:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/memoria_mcp"]

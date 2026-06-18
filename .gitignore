@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Build outputs
+build/
+dist/
+*.egg-info/
+
+# Local runtime and generated data
+.codegraph/
+.ripple-memory/
+*.log
+*.tmp
+
+# Large local embedding models are copied by installers when present.
+# Keep them in the source folder for local packaging, but do not put them in Git.
+models/

@@ -1,0 +1,20 @@
+{
+  "name": "ripple-memory",
+  "interface": {
+    "displayName": "Ripple Memory"
+  },
+  "plugins": [
+    {
+      "name": "ripple-memory-hooks",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ripple-memory-hooks"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "ripple-memory-hooks",
+  "version": "0.1.0",
+  "description": "Pluggable Ripple Memory hooks for Codex.",
+  "author": {
+    "name": "Ripple Memory"
+  },
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "hooks",
+    "codex",
+    "ripple-memory"
+  ],
+  "interface": {
+    "displayName": "Ripple Memory Hooks",
+    "shortDescription": "Injects lightweight project memory through Codex hooks.",
+    "longDescription": "Adds a removable Codex hook adapter for Ripple Memory. The adapter translates Codex hook events into the host-neutral Ripple hook protocol and keeps memory logic in the shared engine.",
+    "developerName": "Ripple Memory",
+    "category": "Productivity",
+    "capabilities": [
+      "Read"
+    ],
+    "defaultPrompt": [
+      "Use Ripple Memory for this coding session"
+    ],
+    "brandColor": "#2563EB",
+    "screenshots": []
+  }
+}
