@@ -1,6 +1,6 @@
 # Ripple Memory
 
-> Not a text store — a memory system. Facts decay, insights propagate, decisions evolve.
+> Long-term memory for AI agents. Memories that fade, connect, and evolve — just like real memory.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)

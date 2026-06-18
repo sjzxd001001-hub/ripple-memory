@@ -14,6 +14,12 @@ ripple-memory MCP server
 + install verification suite
 ```
 
+## Key Documents
+
+- `INSTALL_FOR_LLM.md` — installation guide for AI agents setting up Ripple Memory in a host environment
+- `DEVELOPMENT.md` — development and maintenance guidelines for contributors and maintenance agents
+- `tests/` — source regression and design contract checks (see Testing Strategy below)
+
 ## Architecture Rule
 
 ```text
