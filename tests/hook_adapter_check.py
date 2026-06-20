@@ -89,6 +89,9 @@ def run_check() -> dict[str, Any]:
             _assert(output.get("continue") is True, f"adapter did not continue: {output}")
             _assert(marker in context, f"context missing recalled marker: {output}")
             _assert("adapter_window" in context, "context missing window identity")
+            _assert("status: read_skipped" in context, "UserPromptSubmit latch read skip status is unclear")
+            _assert("reason: user_prompt_submit_no_latch" in context, "UserPromptSubmit latch skip reason missing")
+            _assert("status: disabled" not in context, "UserPromptSubmit context still says latch is disabled")
 
             progress_result = handle_hook_event(
                 RippleHookEvent(
@@ -299,6 +302,7 @@ def run_check() -> dict[str, Any]:
                 "workspace": str(workspace),
                 "data_dir": str(data_dir),
                 "context_contains_marker": marker in context,
+                "user_prompt_latch_status_read_skipped": "status: read_skipped" in context,
                 "natural_progress_prompt_context_contains_marker": progress_marker in progress_context,
                 "latch_written": latch.is_file(),
                 "stop_refreshed_understanding": f"Agent plan for {marker}" in latch_text,

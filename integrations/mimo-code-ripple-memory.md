@@ -1,4 +1,4 @@
-﻿# MiMo Code + Ripple Memory
+# MiMo Code + Ripple Memory
 
 MiMo Code supports Ripple Memory through both a local MCP server and a MiMo
 plugin hook. MCP exposes the four memory tools; the MiMo plugin injects startup
@@ -152,6 +152,23 @@ python -m memoria_mcp.install_check `
 Use `--live-smoke` only after the real MiMo session has started Ripple's MCP
 daemon. The sandbox check proves the package and hook command work; the
 post-restart checks prove MiMo actually loaded the config and plugin.
+
+> **CRITICAL — Plugin cache:** MiMo Code caches loaded plugin modules in-process
+> for the session lifetime. After updating `index.ts` or any plugin file, you
+> MUST restart MiMo Code. Changes will NOT take effect mid-session.
+
+> **Known pitfall — `output.parts` vs `output.message.parts`:** The MiMo Code
+> SDK `chat.message` hook provides user text parts at `output.parts` (a flat
+> `Part[]` array), NOT at `output.message.parts` (which is `undefined` —
+> `UserMessage` has no `parts` field in SDK v2). If an older `index.ts` reads
+> from `output.message.parts` only, the plugin will silently skip latch
+> creation on every message. The fix is the `extractTextParts()` function in
+> `plugins/mimocode/ripple-memory-hooks/index.ts`, which reads `output.parts`
+> first with `output.message?.parts` as a compatibility fallback.
+>
+> **Symptom:** `[Ripple Memory Context]` appears in system prompts (session_start
+> hook works), but `_window_state\<project>\<window-id>\original-word-latch.md`
+> is never created. Check the installed `index.ts` for `extractTextParts`.
 
 ## References
 

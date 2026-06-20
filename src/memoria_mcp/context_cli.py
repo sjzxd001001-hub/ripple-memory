@@ -176,10 +176,16 @@ def _read_original_words_latch(
     window_id: str,
     latch_file: Optional[str],
     no_latch: bool,
+    no_latch_reason: str = "no_latch_requested",
     max_chars: int = MAX_LATCH_CHARS,
 ) -> Dict[str, Any]:
     if no_latch:
-        return {"status": "disabled", "path": "", "window_id": window_id}
+        return {
+            "status": "read_skipped",
+            "reason": no_latch_reason,
+            "path": "",
+            "window_id": window_id,
+        }
 
     path = Path(latch_file).expanduser() if latch_file else _default_latch_file(
         cwd,
@@ -363,6 +369,8 @@ def render_context_block(
             f"  window_id: {latch.get('window_id', window_id)}",
             f"  status: {latch.get('status', 'unknown')}",
         ])
+        if latch.get("reason"):
+            lines.append(f"  reason: {latch.get('reason')}")
         if latch.get("path"):
             lines.append(f"  path: {latch.get('path')}")
         if latch.get("text"):

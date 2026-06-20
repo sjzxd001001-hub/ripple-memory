@@ -984,6 +984,7 @@ def handle_hook_event(event: RippleHookEvent, *, deadline_seconds: float = HOOK_
         window_id=window_id,
         latch_file=os.environ.get("RIPPLE_MEMORY_LATCH_FILE"),
         no_latch=(normalized == "user_prompt_submit"),
+        no_latch_reason="user_prompt_submit_no_latch",
         max_chars=2500,
     )
     other_latches = _read_other_latch_index(
