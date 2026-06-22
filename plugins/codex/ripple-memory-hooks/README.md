@@ -5,6 +5,11 @@ Portable Codex plugin template for Ripple Memory.
 Render `hooks.json.template` and `scripts/ripple-memory-codex-hook.cmd.template`
 before installing. Do not ship another user's absolute paths.
 
+Write the rendered `.cmd` as UTF-8 without BOM, or as the local ANSI encoding if
+non-ASCII paths require it. It must start directly with `@echo off`; a UTF-8 BOM
+makes `cmd.exe` echo every batch line into hook stdout, which then pollutes the
+agent context.
+
 The command path in rendered `hooks.json` should point to the target machine's
 installed `ripple-memory-codex-hook.cmd`. Use JSON-escaped backslashes in
 `hooks.json`, for example:

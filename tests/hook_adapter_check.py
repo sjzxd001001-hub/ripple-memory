@@ -31,6 +31,17 @@ def run_check() -> dict[str, Any]:
         workspace = root / "workspace"
         workspace.mkdir()
         data_dir = root / "memory-data"
+        repo_root = Path(__file__).resolve().parents[1]
+        hook_script_sources = [
+            repo_root / "plugins" / "codex" / "ripple-memory-hooks" / "scripts" / "ripple-memory-codex-hook.cmd.template",
+            repo_root / "plugins" / "claude-code" / "ripple-memory-hooks" / "scripts" / "ripple-memory-claude-hook.cmd",
+            repo_root / "plugins" / "qwen-code" / "ripple-memory-hooks" / "scripts" / "ripple-memory-qwen-hook.cmd.template",
+            repo_root / "plugins" / "mimocode" / "ripple-memory-hooks" / "scripts" / "ripple-memory-mimocode-hook.cmd.template",
+        ]
+        for script_path in hook_script_sources:
+            script_bytes = script_path.read_bytes()
+            _assert(not script_bytes.startswith(b"\xef\xbb\xbf"), f"hook script must be UTF-8 without BOM: {script_path}")
+            _assert(script_bytes.startswith(b"@echo off"), f"hook script must start with @echo off: {script_path}")
 
         old_env = os.environ.copy()
         try:
@@ -311,6 +322,7 @@ def run_check() -> dict[str, Any]:
                 "burst_gate_suppressed_second_long_prompt": long_two_marker not in burst_latch_text,
                 "burst_gate_allows_short_prompt": short_marker in burst_latch_text,
                 "disabled_no_context": "hookSpecificOutput" not in disabled_output,
+                "hook_scripts_no_bom": True,
             }
         finally:
             os.environ.clear()

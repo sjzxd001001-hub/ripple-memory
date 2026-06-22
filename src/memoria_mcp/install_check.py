@@ -1976,7 +1976,7 @@ def check_recall_quality_flow(data_dir: Path) -> CheckResult:
                 {
                     "project": project,
                     "content": (
-                        f"{marker}: current src/session_store.py SessionContextAssembler "
+                        f"{marker}: current api/chat_materials.py ChatMaterialContextBuilder "
                         "owns main Agent Loop transaction material assembly."
                     ),
                     "type": "arch_decision",
@@ -2001,7 +2001,7 @@ def check_recall_quality_flow(data_dir: Path) -> CheckResult:
                     "memoria_recall",
                     {
                         "project": project,
-                        "query": "session_store main Agent Loop transaction",
+                        "query": "chat_materials main Agent Loop transaction",
                         "top_k": 5,
                     },
                 )
@@ -2009,7 +2009,7 @@ def check_recall_quality_flow(data_dir: Path) -> CheckResult:
                 if elapsed >= 0.5:
                     raise AssertionError(f"recall too slow: {elapsed:.3f}s")
                 descriptions = [str(item.get("description") or "") for item in recall.get("results", [])]
-                if not descriptions or "session_store.py" not in descriptions[0]:
+                if not descriptions or "chat_materials.py" not in descriptions[0]:
                     raise AssertionError(f"current exact memory was not first: {recall}")
                 if str(old_loop.get("node_id")) in json.dumps(recall.get("results", []), ensure_ascii=False):
                     raise AssertionError(f"weak old Agent Loop memory leaked into code-name recall: {recall}")
@@ -2897,7 +2897,7 @@ def check_lifecycle_management(data_dir: Path, workspace: Path) -> CheckResult:
 
 def _run_hook_command(command: Path, payload: Dict[str, Any], env: Dict[str, str]) -> subprocess.CompletedProcess[str]:
     if os.name == "nt" and command.suffix.lower() in {".cmd", ".bat"}:
-        cmd = ["cmd.exe", "/c", str(command)]
+        cmd = ["cmd.exe", "/d", "/c", str(command)]
     else:
         cmd = [str(command)]
     return subprocess.run(
@@ -2943,6 +2943,16 @@ def check_hook_command(
         return CheckResult.skip("hook_command", "hook command was not found")
     if not hook_cmd.is_file():
         return CheckResult.fail("hook_command", "hook command path does not exist", path=str(hook_cmd))
+    hook_bytes = hook_cmd.read_bytes()
+    is_windows_cmd = hook_cmd.suffix.lower() in {".cmd", ".bat"}
+    has_utf8_bom = hook_bytes.startswith(b"\xef\xbb\xbf")
+    if os.name == "nt" and is_windows_cmd and has_utf8_bom:
+        return CheckResult.fail(
+            "hook_command",
+            "Windows hook command must be UTF-8 without BOM; BOM breaks @echo off and leaks batch echo into hook context",
+            path=str(hook_cmd),
+            prefix_hex=" ".join(f"{byte:02X}" for byte in hook_bytes[:8]),
+        )
 
     marker = _make_marker("hook_cmd_marker")
     project = _sanitize_project_name(f"install_check_hook_cmd_{marker}")
@@ -2983,6 +2993,26 @@ def check_hook_command(
         }
         proc = _run_hook_command(hook_cmd, payload, env)
     stdout = proc.stdout.strip()
+    stdout_lines = [line for line in stdout.splitlines() if line.strip()]
+    echo_leak_lines = [
+        line
+        for line in stdout_lines
+        if ">\ufeff@echo off" in line
+        or ">@echo off" in line
+        or ">setlocal" in line
+        or ">set \"" in line
+    ]
+    if echo_leak_lines:
+        return CheckResult.fail(
+            "hook_command",
+            "hook stdout contains Windows batch command echo; hook context would be polluted",
+            path=str(hook_cmd),
+            exit_code=proc.returncode,
+            stdout_line_count=len(stdout_lines),
+            echo_leak_preview=echo_leak_lines[:3],
+            stdout_prefix=proc.stdout[:1000],
+            stderr=proc.stderr[-1000:],
+        )
     last_line = stdout.splitlines()[-1] if stdout else ""
     try:
         output = json.loads(last_line)
@@ -3019,6 +3049,8 @@ def check_hook_command(
         "hook_command",
         path=str(hook_cmd),
         exit_code=proc.returncode,
+        hook_script_no_bom=not has_utf8_bom,
+        stdout_line_count=len(stdout_lines),
         context_contains_marker=True,
         latch_written=True,
     )

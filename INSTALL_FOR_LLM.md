@@ -147,9 +147,12 @@ enabled, the daemon handles MCP protocol directly — no proxy processes needed.
 The stdio proxy path continues to work alongside SSE.
 
 5. Render hook scripts from `plugins/<host>/...` templates only when this release
-ships a hook adapter for the target host. On Windows, render absolute paths. If
-a `.cmd` contains non-ASCII paths, write it with the system ANSI/GBK encoding
-and CRLF line endings.
+ships a hook adapter for the target host. On Windows, render absolute paths.
+Write `.cmd` files with CRLF line endings and no UTF-8 BOM. The first bytes must
+start with `40 65 63 68 6F` (`@echo`). A UTF-8 BOM makes `@echo off` fail in
+`cmd.exe`, leaks batch command echo into hook stdout, and pollutes the agent
+context. If a `.cmd` contains non-ASCII paths, use the system ANSI/GBK encoding
+or UTF-8 without BOM, never UTF-8 with BOM or UTF-16.
 
 For generic MCP-only hosts, skip hook rendering. They still get the four MCP
 tools; they just do not get automatic startup context/latch injection until a
@@ -215,6 +218,8 @@ Render the Codex plugin:
 
 - Copy `plugins/codex/ripple-memory-hooks` to `$PluginTarget`.
 - Replace `{{PYTHON}}`, `{{RUNTIME_SRC}}`, and `{{DATA_DIR}}` in the hook script.
+- Write the rendered `.cmd` as UTF-8 without BOM; `@echo off` must be the first
+  bytes of the file.
 - Replace `{{PLUGIN_TARGET_JSON}}` in `hooks.json.template` with a JSON-escaped `$PluginTarget`.
 - Write the rendered file as `$PluginTarget\hooks.json`.
 - Copy/render `plugins/codex/marketplace.json.template` into `$Marketplace\marketplace.json`.
